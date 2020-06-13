@@ -52,7 +52,7 @@ Object {
             "type": "StringLiteral",
             "value": "
             First some text
-            
+
             ",
           },
         },
@@ -359,6 +359,38 @@ Object {
 }
 `;
 
+exports[`Parser when parsing HTML should match single quotes attributes 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "attributes": Array [
+        Object {
+          "name": Object {
+            "name": "type",
+            "type": "Identifier",
+          },
+          "type": "Attribute",
+          "value": Object {
+            "type": "StringLiteral",
+            "value": "checkbox",
+          },
+        },
+      ],
+      "children": Array [],
+      "elementNameLoc": Object {
+        "column": 1,
+        "index": 1,
+        "line": 1,
+      },
+      "name": "input",
+      "selfClosing": true,
+      "type": "Element",
+    },
+  ],
+  "type": "SequenceExpression",
+}
+`;
+
 exports[`Parser when parsing HTML should match standalone attributes 1`] = `
 Object {
   "expressions": Array [
@@ -604,7 +636,7 @@ Object {
 
 exports[`Parser when parsing HTML should throw a controlled error on an interrupted doctype declaration 1`] = `
 [Error: ERROR: Expected string, symbol, or expression
-  1 | <!DOCTYPE 
+  1 | <!DOCTYPE
 
 Only strings or symbols can be part of a declaration]
 `;
@@ -639,7 +671,7 @@ Object {
       "value": Object {
         "type": "StringLiteral",
         "value": "
-            
+
             ",
       },
     },

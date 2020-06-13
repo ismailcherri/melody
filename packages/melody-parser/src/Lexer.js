@@ -24,7 +24,8 @@ const State = {
     STRING_SINGLE: 'STRING_SINGLE',
     STRING_DOUBLE: 'STRING_DOUBLE',
     ELEMENT: 'ELEMENT',
-    ATTRIBUTE_VALUE: 'ATTRIBUTE_VALUE',
+    ATTRIBUTE_VALUE_DOUBLE_QUOTE: 'ATTRIBUTE_VALUE_DOUBLE_QUOTE',
+    ATTRIBUTE_VALUE_SINGLE_QUOTE: 'ATTRIBUTE_VALUE_SINGLE_QUOTE',
     DECLARATION: 'DECLARATION',
 };
 
@@ -125,7 +126,8 @@ export default class Lexer {
                 this.state !== State.TEXT &&
                 this.state !== State.STRING_DOUBLE &&
                 this.state !== State.STRING_SINGLE &&
-                this.state !== State.ATTRIBUTE_VALUE &&
+                this.state !== State.ATTRIBUTE_VALUE_SINGLE_QUOTE &&
+                this.state !== State.ATTRIBUTE_VALUE_DOUBLE_QUOTE &&
                 isWhitespace(c)
             ) {
                 input.next();
@@ -268,7 +270,11 @@ export default class Lexer {
                         return this.createToken(TokenTypes.ELEMENT_END, pos);
                     case '"':
                         input.next();
-                        this.pushState(State.ATTRIBUTE_VALUE);
+                        this.pushState(State.ATTRIBUTE_VALUE_DOUBLE_QUOTE);
+                        return this.createToken(TokenTypes.STRING_START, pos);
+                    case "'":
+                        input.next();
+                        this.pushState(State.ATTRIBUTE_VALUE_SINGLE_QUOTE);
                         return this.createToken(TokenTypes.STRING_START, pos);
                     case '=':
                         input.next();
@@ -276,7 +282,7 @@ export default class Lexer {
                     default:
                         return this.matchSymbol(pos);
                 }
-            } else if (this.state === State.ATTRIBUTE_VALUE) {
+            } else if (this.state === State.ATTRIBUTE_VALUE_DOUBLE_QUOTE) {
                 if (c === '"') {
                     input.next();
                     this.popState();
@@ -284,6 +290,14 @@ export default class Lexer {
                 } else {
                     return this.matchAttributeValue(pos);
                 }
+            } else if (this.state === State.ATTRIBUTE_VALUE_SINGLE_QUOTE) {
+                    if (c === "'") {
+                        input.next();
+                        this.popState();
+                        return this.createToken(TokenTypes.STRING_END, pos);
+                    } else {
+                        return this.matchAttributeValue(pos);
+                    }
             } else if (this.state === State.DECLARATION) {
                 switch (c) {
                     case '>':
@@ -565,7 +579,7 @@ export default class Lexer {
 
     matchAttributeValue(pos) {
         let input = this.input,
-            start = this.state === State.STRING_SINGLE ? "'" : '"',
+            start = this.state === State.ATTRIBUTE_VALUE_SINGLE_QUOTE ? "'" : '"',
             c;
         if (input.la(0) === '{') {
             return this.matchExpressionToken(pos);

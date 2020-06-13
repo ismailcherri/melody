@@ -186,7 +186,7 @@ describe('Parser', function() {
         it('should preserve whitespace between comments', function() {
             const parser = createParserWithOptions(
                 `{# First comment #}
-            
+
             {# Second comment #}`,
                 {
                     ignoreComments: false,
@@ -540,6 +540,11 @@ describe('Parser', function() {
             expect(node).toMatchSnapshot();
         });
 
+        it('should match single quotes attributes', function() {
+            const node = parse`<input type='checkbox'>`;
+            expect(node).toMatchSnapshot();
+        });
+
         it('should match HTML comments', function() {
             const parser = createParserWithOptions('<span><!--//--></span>', {
                 ignoreComments: false,
@@ -552,7 +557,7 @@ describe('Parser', function() {
         it('should match HTML comments mixed with other text', function() {
             const markup = `<span>
             First some text
-            
+
             <!-- Then a comment-->
             </span>`;
             const parser = createParserWithOptions(markup, {
@@ -773,9 +778,9 @@ describe('Parser', function() {
         });
 
         it('should reproduce the source of simple text', function() {
-            const textSource = `This will be the story 
-            of young Huckleberry Finn 
-            who lived on the banks of 
+            const textSource = `This will be the story
+            of young Huckleberry Finn
+            who lived on the banks of
             the Mississippi`;
             const source = `<img src="none">${textSource}<span>The end</span>`;
             const node = parse(source);
