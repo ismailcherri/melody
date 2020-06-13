@@ -636,7 +636,7 @@ Object {
 
 exports[`Parser when parsing HTML should throw a controlled error on an interrupted doctype declaration 1`] = `
 [Error: ERROR: Expected string, symbol, or expression
-  1 | <!DOCTYPE
+  1 | <!DOCTYPE 
 
 Only strings or symbols can be part of a declaration]
 `;
