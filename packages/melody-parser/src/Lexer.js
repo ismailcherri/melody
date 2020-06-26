@@ -519,7 +519,7 @@ export default class Lexer {
             c;
         while (
             (c = input.lac(0)) &&
-            (c === 95 ||
+            (c === 95 || c === 42 ||
                 isAlpha(c) ||
                 isDigit(c) ||
                 (inElement && (c === 45 || c === 58)))

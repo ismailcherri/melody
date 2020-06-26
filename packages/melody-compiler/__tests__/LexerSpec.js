@@ -710,6 +710,54 @@ describe('Lexer', () => {
             expect(token.type).toEqual(Types.ELEMENT_END);
         });
 
+        it.only('should support angular asterisk for attributes', () => {
+            var lexer = new Lexer(
+                new CharStream('<div *ngIf="object.property">Test</div>')
+                ),
+                token;
+            token = lexer.next();
+            expect(token.type).toEqual(Types.ELEMENT_START);
+            expect(token.text).toEqual('<');
+            token = lexer.next();
+            expect(token.text).toEqual('div');
+            expect(token.type).toEqual(Types.SYMBOL);
+            token = lexer.next();
+            expect(token.type).toEqual(Types.WHITESPACE);
+            token = lexer.next();
+            expect(token.text).toEqual('*ngIf');
+            expect(token.type).toEqual(Types.SYMBOL);
+            token = lexer.next();
+            expect(token.text).toEqual('=');
+            expect(token.type).toEqual(Types.ASSIGNMENT);
+            token = lexer.next();
+            expect(token.text).toEqual('"');
+            expect(token.type).toEqual(Types.STRING_START);
+            token = lexer.next();
+            expect(token.text).toEqual('object.property');
+            expect(token.type).toEqual(Types.STRING);
+            token = lexer.next();
+            expect(token.text).toEqual('"');
+            expect(token.type).toEqual(Types.STRING_END);
+            token = lexer.next();
+            expect(token.text).toEqual('>');
+            expect(token.type).toEqual(Types.ELEMENT_END);
+            token = lexer.next();
+            expect(token.text).toEqual('Test');
+            expect(token.type).toEqual(Types.TEXT);
+            token = lexer.next();
+            expect(token.type).toEqual(Types.ELEMENT_START);
+            expect(token.text).toEqual('<');
+            token = lexer.next();
+            expect(token.type).toEqual(Types.SLASH);
+            expect(token.text).toEqual('/');
+            token = lexer.next();
+            expect(token.text).toEqual('div');
+            expect(token.type).toEqual(Types.SYMBOL);
+            token = lexer.next();
+            expect(token.text).toEqual('>');
+            expect(token.type).toEqual(Types.ELEMENT_END);
+        });
+
         it('should match HTML attributes with mixed values', () => {
             var lexer = new Lexer(
                     new CharStream('<div class="test-{{name}} foo">Test</div>')
