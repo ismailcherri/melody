@@ -65,9 +65,10 @@ Object.assign(Component.prototype, {
                 updates: this.updates,
                 subscribe: obs => this.subscriptions.push(obs.subscribe()),
             });
-            const warningSubscription = process.env.NODE_ENV !== 'production'
-                ? warningTimer.subscribe()
-                : null;
+            const warningSubscription =
+                process.env.NODE_ENV !== 'production'
+                    ? warningTimer.subscribe()
+                    : null;
             const s = t.pipe(distinctUntilChanged(shallowEqual)).subscribe(
                 state => {
                     if (warningSubscription && !warningSubscription.closed) {

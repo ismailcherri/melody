@@ -220,7 +220,8 @@ export default class Lexer {
             } else if (this.state === State.EXPRESSION) {
                 if (
                     (c === '}' && input.la(1) === '}') ||
-                    (c === '-' && input.la(1) === '}' && input.la(2) === '}')
+                    (c === '-' && input.la(1) === '}' && input.la(2) === '}') ||
+                    (c === "'" && input.la(1) === '}')
                 ) {
                     if (c === '-') {
                         input.next();
@@ -291,13 +292,13 @@ export default class Lexer {
                     return this.matchAttributeValue(pos);
                 }
             } else if (this.state === State.ATTRIBUTE_VALUE_SINGLE_QUOTE) {
-                    if (c === "'") {
-                        input.next();
-                        this.popState();
-                        return this.createToken(TokenTypes.STRING_END, pos);
-                    } else {
-                        return this.matchAttributeValue(pos);
-                    }
+                if (c === "'") {
+                    input.next();
+                    this.popState();
+                    return this.createToken(TokenTypes.STRING_END, pos);
+                } else {
+                    return this.matchAttributeValue(pos);
+                }
             } else if (this.state === State.DECLARATION) {
                 switch (c) {
                     case '>':
@@ -330,6 +331,11 @@ export default class Lexer {
                 if (input.la(0) === '-') {
                     input.next();
                 }
+                return this.createToken(TokenTypes.EXPRESSION_START, pos);
+            case "'":
+                input.next();
+                input.next();
+                this.pushState(State.EXPRESSION);
                 return this.createToken(TokenTypes.EXPRESSION_START, pos);
             case '%':
                 input.next();
@@ -579,7 +585,8 @@ export default class Lexer {
 
     matchAttributeValue(pos) {
         let input = this.input,
-            start = this.state === State.ATTRIBUTE_VALUE_SINGLE_QUOTE ? "'" : '"',
+            start =
+                this.state === State.ATTRIBUTE_VALUE_SINGLE_QUOTE ? "'" : '"',
             c;
         if (input.la(0) === '{') {
             return this.matchExpressionToken(pos);
@@ -635,7 +642,7 @@ export default class Lexer {
         while ((c = input.la(0)) && c !== EOF) {
             if (c === '{') {
                 const c2 = input.la(1);
-                if (c2 === '{' || c2 === '#' || c2 === '%') {
+                if (c2 === '{' || c2 === '#' || c2 === '%' || c2 === "'") {
                     break;
                 }
             } else if (c === '<') {
